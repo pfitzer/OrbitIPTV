@@ -5,13 +5,15 @@ from Components.ActionMap import ActionMap
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
 from twisted.web.client import downloadPage
+from enigma import eDVBDB
 
 
 class OrbitScreen(Screen):
-    DESCS = ['DE', 'UK', '18', 'US', 'USA']
+    BOUQUET_NAME = 'Orbit-IPTV'
+    DESCS = ['DE:', 'UK:', '18', 'US:', 'USA:']
     BOUQUET = '/etc/enigma2/userbouquet.ORBIT_IPTV__tv_.tv'
-    USERNAME = "[YOUR USERNAME]"
-    PASSWORD = "[YOUR PASSWORD]"
+    USERNAME = "[USERNAME]"
+    PASSWORD = "[PASSWORD]"
     URL = "http://orbit-iptv.com:2500/get.php?username=%s&password=%s&type=dreambox&output=mpegts" % (USERNAME, PASSWORD)
     TEMP_FILE = '/tmp/bouquet.tv'
     skin = """
@@ -35,8 +37,6 @@ class OrbitScreen(Screen):
 
     def go(self):
         returnValue = self["myMenu"].l.getCurrentSelection()[1]
-
-        print "\n[MyMenu] returnValue: " + returnValue + "\n"
         if returnValue is not None:
             if returnValue is "load":
                 downloadPage(self.URL, self.TEMP_FILE).addCallback(self.convert).addErrback(self.downloadError)
@@ -54,21 +54,25 @@ class OrbitScreen(Screen):
     def convert(self, raw):
         print "[e2Fetcher.fetchPage]: download done", raw
         new = open(self.BOUQUET, 'w')
-
+        new.write('#NAME %s' % self.BOUQUET_NAME)
         try:
             with open(self.TEMP_FILE) as f:
                 content = f.readlines()
                 lines = iter(content)
                 for line in lines:
                     for desc in self.DESCS:
-                        if "#DESCRIPTION %s:" % desc in line:
-                            new.write(line)
-                            new.write(lines.next())
+                        if ("#DESCRIPTION %s" % desc) in line:
+                            nl = lines.next()
+                            if nl != '/n':
+                                new.write(line)
+                                new.write(nl)
             f.close()
             new.close()
-            self.session.open(MessageBox, text=_("Bouquet updated"))
         except Exception as e:
-            self.session.open(MessageBox, text=e.msg)
+            self.session.open(MessageBox, text=e.message, type=MessageBox.TYPE_ERROR)
+
+        db = eDVBDB.getInstance().reloadBouquets()
+        self.session.open(MessageBox, text=_("Bouquet updated"), type=MessageBox.TYPE_INFO)
 
     def downloadError(self, raw):
         print "[e2Fetcher.fetchPage]: download Error", raw
@@ -77,7 +81,7 @@ class OrbitScreen(Screen):
 
 
 def main(session, **kwargs):
-    print "\n[Hallo World] start\n"
+    print "\n[OrbitIPTV] start\n"
 
     session.open(OrbitScreen)
 
@@ -89,3 +93,4 @@ def Plugins(**kwargs):
         where=PluginDescriptor.WHERE_PLUGINMENU,
         icon="../ihad_tut.png",
         fnc=main)
+
