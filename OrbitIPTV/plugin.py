@@ -10,8 +10,8 @@ from twisted.web.client import downloadPage
 class OrbitScreen(Screen):
     DESCS = ['DE', 'UK', '18', 'US', 'USA']
     BOUQUET = '/etc/enigma2/userbouquet.ORBIT_IPTV__tv_.tv'
-    USERNAME = "[YOUR USERNAME]";
-    PASSWORD = "[YOUR PASSWORD]";
+    USERNAME = "[YOUR USERNAME]"
+    PASSWORD = "[YOUR PASSWORD]"
     URL = "http://orbit-iptv.com:2500/get.php?username=%s&password=%s&type=dreambox&output=mpegts" % (USERNAME, PASSWORD)
     TEMP_FILE = '/tmp/bouquet.tv'
     skin = """
