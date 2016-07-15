@@ -54,7 +54,7 @@ class OrbitScreen(Screen):
     def convert(self, raw):
         print "[e2Fetcher.fetchPage]: download done", raw
         new = open(self.BOUQUET, 'w')
-        new.write('#NAME %s' % self.BOUQUET_NAME)
+        new.write('#NAME %s' % self.BOUQUET_NAME + '\n')
         try:
             with open(self.TEMP_FILE) as f:
                 content = f.readlines()
