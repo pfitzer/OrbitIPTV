@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-15 16:54+0200\n"
-"PO-Revision-Date: 2016-07-15 16:55+0200\n"
+"POT-Creation-Date: 2016-07-16 16:04+0200\n"
+"PO-Revision-Date: 2016-07-16 16:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -14,23 +14,51 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: plugin.py\n"
 
-#: plugin.py:26
-msgid "Entry 1"
-msgstr "herunterladen"
+#: plugin.py:44
+msgid "Close"
+msgstr "Schliesen"
 
-#: plugin.py:27
-msgid "Exit"
-msgstr "abbrechen"
+#: plugin.py:45
+msgid "Update"
+msgstr "Aktualsieren"
 
-#: plugin.py:47
-#, python-format
-msgid "You selected entry no. %s!"
-msgstr "Du hast Eintrag Nr. %s gewählt!"
+#: plugin.py:46
+msgid "Settings"
+msgstr "Einstellungen"
 
-#: plugin.py:69
+#: plugin.py:77
+msgid "User Credentials saved"
+msgstr "Benutzereinstellungen gespeichert"
+
+#: plugin.py:101
 msgid "Bouquet updated"
 msgstr "Bouquet wurde aktuallisert"
 
-#: plugin.py:76
+#: plugin.py:113
 msgid "Error downloading: "
 msgstr "Fehler beim Herunterladen"
+
+#: plugin.py:136
+msgid "User"
+msgstr "Benutzer"
+
+#: plugin.py:144
+msgid "Password"
+msgstr "Passwort"
+
+#: plugin.py:152
+msgid "Set User Credentials"
+msgstr "Benutzereinstellungen"
+
+#: plugin.py:155
+msgid "Input"
+msgstr "Eingabe"
+
+#~ msgid "Entry 1"
+#~ msgstr "herunterladen"
+
+#~ msgid "Exit"
+#~ msgstr "abbrechen"
+
+#~ msgid "You selected entry no. %s!"
+#~ msgstr "Du hast Eintrag Nr. %s gewählt!"
