@@ -52,7 +52,7 @@ class OrbitScreen(Screen):
                                             "cancel": self.cancel
                                         }, -1)
 
-        self.download_url = self.URL % (self.username.getValue(), self.password.getValue())
+        self.download_url = self.URL % (self.username.value, self.password.value)
 
     def go(self):
         downloadPage(self.download_url, self.TEMP_FILE).addCallback(self.convert).addErrback(self.downloadError)
@@ -70,10 +70,10 @@ class OrbitScreen(Screen):
             return
         print "[OrbitIPTV] settings save"
         if result['username']:
-            self.username.setValue(result['username'])
+            self.username.value = result['username']
             self.username.save()
         if result['password']:
-            self.password.setValue(result['password'])
+            self.password.value = result['password']
             self.password.save()
         self.session.open(MessageBox, text=_("User Credentials saved"), type=MessageBox.TYPE_INFO)
 
@@ -139,7 +139,7 @@ class OrbitSettings(Screen, ConfigListScreen):
     default_config = [
         {
             "key": "username",
-            "value": config.plugins.OrbitIPTV.username.getValue(),
+            "value": config.plugins.OrbitIPTV.username.value,
             "title": _("User"),
             "required": True,
             "type": TYPE_TEXT,
@@ -147,7 +147,7 @@ class OrbitSettings(Screen, ConfigListScreen):
         },
         {
             "key": "password",
-            "value": config.plugins.OrbitIPTV.password.getValue(),
+            "value": config.plugins.OrbitIPTV.password.value,
             "title": _("Password"),
             "required": True,
             "type": TYPE_PASSWORD,
