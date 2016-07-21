@@ -16,13 +16,14 @@ config.plugins.OrbitIPTV.password = ConfigPassword()
 
 
 class OrbitScreen(Screen):
+    CONFIG_DIR = '/etc/enigma2/'
     BOUQUET_NAME = 'Orbit-IPTV'
     DESCS = ['DE:', 'UK:', '18', 'US:', 'USA:']
-    BOUQUET = '/etc/enigma2/userbouquet.ORBIT_IPTV__tv_.tv'
+    BOUQUET = 'userbouquet.ORBIT_IPTV__tv_.tv'
     URL = "http://orbit-iptv.com:2500/get.php?username=%s&password=%s&type=dreambox&output=mpegts"
     TEMP_FILE = '/tmp/bouquet.tv'
-    BOUQUET_TV = '/etc/enigma2/userbouquet.tv'
-    BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.ORBIT_IPTV__tv_.tv" ORDER BY bouquet'
+    BOUQUET_TV = '%sbouquets.tv' % CONFIG_DIR
+    BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet \n' % BOUQUET
     skin = """
         <screen position="center,80" size="800,100" title="Orbit IPTV" >
             <ePixmap pixmap="skin_default/buttons/green.png" position="230,5" size="220,40" alphatest="on" />
@@ -78,7 +79,7 @@ class OrbitScreen(Screen):
 
     def convert(self, raw):
         print "[e2Fetcher.fetchPage]: download done", raw
-        new = open(self.BOUQUET, 'w')
+        new = open(self.CONFIG_DIR  + self.BOUQUET, 'w')
         new.write('#NAME %s' % self.BOUQUET_NAME + '\n')
         try:
             with open(self.TEMP_FILE) as f:
@@ -91,22 +92,27 @@ class OrbitScreen(Screen):
                             if nl != '\n':
                                 new.write(line)
                                 new.write(nl)
-            f.close()
-            new.close()
-            self.check_bouquettv()
         except Exception as e:
             self.session.open(MessageBox, text=e.message, type=MessageBox.TYPE_ERROR)
+        finally:
+            f.close()
 
+        new.close()
+        self.check_bouquettv()
         eDVBDB.getInstance().reloadBouquets()
         eDVBDB.getInstance().reloadServicelist()
         self.session.open(MessageBox, text=_("Bouquet updated"), type=MessageBox.TYPE_INFO)
         return
 
     def check_bouquettv(self):
-        f = open(self.BOUQUET_TV, 'a+')
-        f.read()
-        if not self.BOUQUET_TV_ENTRY in f:
-            f.write(self.BOUQUET_TV_ENTRY)
+        try:
+            f = open(self.BOUQUET_TV, 'a+')
+            f.read()
+            if not self.BOUQUET_TV_ENTRY in f:
+                f.write(self.BOUQUET_TV_ENTRY)
+                print "[OrbitIPTV] entry added"
+        finally:
+            f.close()
 
     def downloadError(self, raw):
         print "[e2Fetcher.fetchPage]: download Error", raw
