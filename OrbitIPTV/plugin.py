@@ -25,8 +25,8 @@ class OrbitScreen(Screen):
     BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "userbouquet.ORBIT_IPTV__tv_.tv" ORDER BY bouquet'
     skin = """
         <screen position="center,80" size="800,100" title="Orbit IPTV" >
-            <ePixmap pixmap="skin_default/buttons/green.png" position="210,5" size="220,40" alphatest="on" />
-            <ePixmap pixmap="skin_default/buttons/yellow.png" position="410,5" size="220,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/green.png" position="230,5" size="220,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/yellow.png" position="430,5" size="220,40" alphatest="on" />
             <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="220,40" alphatest="on" />
             <widget source="key_green" render="Label" position="230,5" size="220,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
 			<widget source="key_yellow" render="Label" position="430,5" size="220,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
