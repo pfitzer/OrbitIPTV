@@ -79,7 +79,7 @@ class OrbitScreen(Screen):
     def convert(self, raw):
         print "[e2Fetcher.fetchPage]: download done", raw
         new = open(self.BOUQUET, 'w')
-        new.write('#NAME %s' % self.BOUQUET_NAME + '/n')
+        new.write('#NAME %s' % self.BOUQUET_NAME + '\n')
         try:
             with open(self.TEMP_FILE) as f:
                 content = f.readlines()
@@ -88,7 +88,7 @@ class OrbitScreen(Screen):
                     for desc in self.DESCS:
                         if ("#DESCRIPTION %s" % desc) in line:
                             nl = lines.next()
-                            if nl != '/n':
+                            if nl != '\n':
                                 new.write(line)
                                 new.write(nl)
             f.close()
@@ -97,7 +97,8 @@ class OrbitScreen(Screen):
         except Exception as e:
             self.session.open(MessageBox, text=e.message, type=MessageBox.TYPE_ERROR)
 
-        db = eDVBDB.getInstance().reloadBouquets()
+        eDVBDB.getInstance().reloadBouquets()
+        eDVBDB.getInstance().reloadServicelist()
         self.session.open(MessageBox, text=_("Bouquet updated"), type=MessageBox.TYPE_INFO)
         return
 
