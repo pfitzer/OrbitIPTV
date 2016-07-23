@@ -23,15 +23,15 @@ class OrbitScreen(Screen):
     URL = "http://orbit-iptv.com:2500/get.php?username=%s&password=%s&type=dreambox&output=mpegts"
     TEMP_FILE = '/tmp/bouquet.tv'
     BOUQUET_TV = '%sbouquets.tv' % CONFIG_DIR
-    BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet \n' % BOUQUET
+    BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet' % BOUQUET
     skin = """
-        <screen position="center,80" size="800,100" title="Orbit IPTV" >
-            <ePixmap pixmap="skin_default/buttons/green.png" position="230,5" size="220,40" alphatest="on" />
-            <ePixmap pixmap="skin_default/buttons/yellow.png" position="430,5" size="220,40" alphatest="on" />
-            <ePixmap pixmap="skin_default/buttons/red.png" position="10,5" size="220,40" alphatest="on" />
-            <widget source="key_green" render="Label" position="230,5" size="220,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
-			<widget source="key_yellow" render="Label" position="430,5" size="220,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  shadowColor="black" shadowOffset="-2,-2" />
-            <widget source="key_red" render="Label" position="10,5" size="220,40" zPosition="1" font="Regular;20" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" shadowColor="black" shadowOffset="-2,-2" />
+        <screen position="center,80" size="600,100" title="Orbit IPTV" >
+            <ePixmap pixmap="skin_default/buttons/green.png" position="10,5" size="150,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/yellow.png" position="160,5" size="150,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/red.png" position="310,5" size="150,40" alphatest="on" />
+            <widget source="key_green" render="Label" position="10,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_yellow" render="Label" position="160,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  />
+            <widget source="key_red" render="Label" position="310,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
         </screen>"""
 
     def __init__(self, session, args=None):
@@ -43,7 +43,7 @@ class OrbitScreen(Screen):
         self["key_red"] = StaticText(_("Close"))
         self["key_green"] = StaticText(_("Update"))
         self["key_yellow"] = StaticText(_("Settings"))
-        self["myActionMap"] = ActionMap(["SetupActions", "ColorActions"],
+        self["actions"] = ActionMap(["ColorActions"],
                                         {
                                             "ok": self.go,
                                             "green": self.go,
@@ -58,8 +58,6 @@ class OrbitScreen(Screen):
         downloadPage(self.download_url, self.TEMP_FILE).addCallback(self.convert).addErrback(self.downloadError)
 
     def cancel(self):
-        print "\n[MyMenu] cancel\n"
-
         self.close(None)
 
     def settings(self):
@@ -106,10 +104,13 @@ class OrbitScreen(Screen):
 
     def check_bouquettv(self):
         try:
+            exists = False
             f = open(self.BOUQUET_TV, 'a+')
-            f.read()
-            if not self.BOUQUET_TV_ENTRY in f:
-                f.write(self.BOUQUET_TV_ENTRY)
+            for l in f.readlines():
+                if self.BOUQUET_TV_ENTRY in l:
+                    exists = True
+            if not exists:
+                f.write(self.BOUQUET_TV_ENTRY + '\n')
                 print "[OrbitIPTV] entry added"
         finally:
             f.close()
@@ -167,7 +168,7 @@ class OrbitSettings(Screen, ConfigListScreen):
         self._title = title
 
         self["title"] = StaticText(self._title)
-        self["setupActions"] = ActionMap(["SetupActions"],
+        self["actions"] = ActionMap(["SetupActions"],
                                          {
                                              "save": self._ok,
                                              "cancel": self._cancel,
