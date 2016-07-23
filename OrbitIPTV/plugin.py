@@ -25,13 +25,13 @@ class OrbitScreen(Screen):
     BOUQUET_TV = '%sbouquets.tv' % CONFIG_DIR
     BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet' % BOUQUET
     skin = """
-        <screen position="center,80" size="600,100" title="Orbit IPTV" >
-            <ePixmap pixmap="skin_default/buttons/green.png" position="10,5" size="150,40" alphatest="on" />
-            <ePixmap pixmap="skin_default/buttons/yellow.png" position="160,5" size="150,40" alphatest="on" />
-            <ePixmap pixmap="skin_default/buttons/red.png" position="310,5" size="150,40" alphatest="on" />
-            <widget source="key_green" render="Label" position="10,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
-			<widget source="key_yellow" render="Label" position="160,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  />
-            <widget source="key_red" render="Label" position="310,5" size="150,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
+        <screen position="center,80" size="500,100" title="Orbit IPTV" >
+            <ePixmap pixmap="skin_default/buttons/green.png" position="10,5" size="140,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/yellow.png" position="150,5" size="140,40" alphatest="on" />
+            <ePixmap pixmap="skin_default/buttons/red.png" position="290,5" size="140,40" alphatest="on" />
+            <widget source="key_green" render="Label" position="10,5" size="140,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#1f771f" transparent="1" />
+			<widget source="key_yellow" render="Label" position="150,5" size="140,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#a08500" transparent="1"  />
+            <widget source="key_red" render="Label" position="290,5" size="140,40" zPosition="1" font="Regular;18" halign="center" valign="center" backgroundColor="#9f1313" transparent="1" />
         </screen>"""
 
     def __init__(self, session, args=None):
