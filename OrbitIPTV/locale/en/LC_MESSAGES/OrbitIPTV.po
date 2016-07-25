@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2016-07-16 16:04+0200\n"
-"PO-Revision-Date: 2016-07-16 16:04+0200\n"
+"POT-Creation-Date: 2016-07-25 12:45+0200\n"
+"PO-Revision-Date: 2016-07-25 12:45+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -14,43 +14,67 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: plugin.py\n"
 
-#: plugin.py:44
+#: plugin.py:46
 msgid "Close"
 msgstr "Close"
 
-#: plugin.py:45
+#: plugin.py:47
 msgid "Update"
 msgstr "Update"
 
-#: plugin.py:46
+#: plugin.py:48
 msgid "Settings"
 msgstr "Settings"
 
-#: plugin.py:77
+#: plugin.py:49
+msgid "Countries"
+msgstr "Countries"
+
+#: plugin.py:81
 msgid "User Credentials saved"
 msgstr "User Credentials saved"
 
-#: plugin.py:101
+#: plugin.py:107
 msgid "Bouquet updated"
 msgstr "Bouquet updated"
 
-#: plugin.py:113
+#: plugin.py:126
 msgid "Error downloading: "
 msgstr "error downloading"
 
-#: plugin.py:136
+#: plugin.py:140
 msgid "User"
 msgstr "User"
 
-#: plugin.py:144
+#: plugin.py:148
 msgid "Password"
 msgstr "Password"
 
-#: plugin.py:152
+#: plugin.py:156
+msgid "Germany"
+msgstr "Germany"
+
+#: plugin.py:164
+msgid "United Kingdom"
+msgstr "United Kingdom"
+
+#: plugin.py:172
+msgid "Netherland"
+msgstr "Netherlands"
+
+#: plugin.py:180
+msgid "United States"
+msgstr "USA"
+
+#: plugin.py:188
+msgid "Italy"
+msgstr "Italy"
+
+#: plugin.py:195
 msgid "Set User Credentials"
 msgstr "Set User Credentials"
 
-#: plugin.py:155
+#: plugin.py:198
 msgid "Input"
 msgstr "Input"
 

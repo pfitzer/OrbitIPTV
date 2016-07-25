@@ -1,18 +1,24 @@
 from __init__ import _
 from Screens.Screen import Screen
-from Components.ConfigList import ConfigListScreen
 from Components.ActionMap import ActionMap
 from Components.Sources.StaticText import StaticText
-from Components.config import config, ConfigSubsection, ConfigText, ConfigPassword, ConfigInteger, getConfigListEntry
+from Components.config import config, ConfigSubsection, ConfigText, ConfigYesNo, ConfigPassword
 from Screens.MessageBox import MessageBox
 from Plugins.Plugin import PluginDescriptor
-from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
+from settings import OrbitSettings
 from enigma import eDVBDB
 
 config.plugins.OrbitIPTV = ConfigSubsection()
 config.plugins.OrbitIPTV.username = ConfigText()
 config.plugins.OrbitIPTV.password = ConfigPassword()
+config.plugins.OrbitIPTV.DE = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.NL = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.US = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.UK = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.NL = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.XX = ConfigYesNo(default=True)
+config.plugins.OrbitIPTV.IT = ConfigYesNo(default=True)
 
 
 class OrbitScreen(Screen):
@@ -25,7 +31,7 @@ class OrbitScreen(Screen):
     BOUQUET_TV = '%sbouquets.tv' % CONFIG_DIR
     BOUQUET_TV_ENTRY = '#SERVICE 1:7:1:0:0:0:0:0:0:0:FROM BOUQUET "%s" ORDER BY bouquet' % BOUQUET
     skin = """
-        <screen position="center,80" size="500,100" title="Orbit IPTV" >
+        <screen position="center,80" size="700,100" title="Orbit IPTV" >
             <ePixmap pixmap="skin_default/buttons/green.png" position="10,5" size="140,40" alphatest="on" />
             <ePixmap pixmap="skin_default/buttons/yellow.png" position="150,5" size="140,40" alphatest="on" />
             <ePixmap pixmap="skin_default/buttons/red.png" position="290,5" size="140,40" alphatest="on" />
@@ -36,23 +42,21 @@ class OrbitScreen(Screen):
 
     def __init__(self, session, args=None):
         self.session = session
-
-        self.username = config.plugins.OrbitIPTV.username
-        self.password = config.plugins.OrbitIPTV.password
         Screen.__init__(self, session)
         self["key_red"] = StaticText(_("Close"))
         self["key_green"] = StaticText(_("Update"))
         self["key_yellow"] = StaticText(_("Settings"))
+        self["key_blue"] = StaticText(_("Countries"))
         self["actions"] = ActionMap(["ColorActions"],
-                                        {
-                                            "ok": self.go,
-                                            "green": self.go,
-                                            "yellow": self.settings,
-                                            "red": self.cancel,
-                                            "cancel": self.cancel
-                                        }, -1)
+                                    {
+                                        "ok": self.go,
+                                        "green": self.go,
+                                        "yellow": self.settings,
+                                        "red": self.cancel,
+                                        "cancel": self.cancel
+                                    }, -1)
 
-        self.download_url = self.URL % (self.username.value, self.password.value)
+        self.download_url = self.URL % (config.plugins.OrbitIPTV.username.getValue(), config.plugins.OrbitIPTV.password.getValue())
 
     def go(self):
         downloadPage(self.download_url, self.TEMP_FILE).addCallback(self.convert).addErrback(self.downloadError)
@@ -61,23 +65,24 @@ class OrbitScreen(Screen):
         self.close(None)
 
     def settings(self):
-        self.session.openWithCallback(self.set_settings, OrbitSettings)
+        self.session.openWithCallback(self.set_settings, UserSettings)
 
     def set_settings(self, result):
         if result is None:
             return
         print "[OrbitIPTV] settings save"
-        if result['username']:
-            self.username.value = result['username']
-            self.username.save()
-        if result['password']:
-            self.password.value = result['password']
-            self.password.save()
+        set = config.plugins.OrbitIPTV.dict()
+        for k, v in result.items():
+            print "[OrbitIPTV] " + k + ": " + str(v)
+            set[k].value = v
+            set[k].save()
+        config.plugins.OrbitIPTV.save()
+        config.plugins.OrbitIPTV.load()
         self.session.open(MessageBox, text=_("User Credentials saved"), type=MessageBox.TYPE_INFO)
 
     def convert(self, raw):
         print "[e2Fetcher.fetchPage]: download done", raw
-        new = open(self.CONFIG_DIR  + self.BOUQUET, 'w')
+        new = open(self.CONFIG_DIR + self.BOUQUET, 'w')
         new.write('#NAME %s' % self.BOUQUET_NAME + '\n')
         try:
             with open(self.TEMP_FILE) as f:
@@ -121,117 +126,77 @@ class OrbitScreen(Screen):
         self.session.open(MessageBox, text=_("Error downloading: ") + self.download_url, type=MessageBox.TYPE_ERROR)
 
     def check_credentials(self):
-        if not self.username.value or not self.password.value:
+        if not self.username.getValue() or not self.password.getValue():
             return False
         return True
 
 
-class OrbitSettings(Screen, ConfigListScreen):
-    TYPE_TEXT = 0
-    TYPE_PASSWORD = 1
-    TYPE_PIN = 2
-
-    skin = """
-		<screen position="center,center" size="700,120"  title="Input">
-			<widget source="title" render="Label" position="5,0" zPosition="1" size="690,25" font="Regular;22" halign="left" valign="bottom" backgroundColor="background" transparent="1" />
-			<widget name="config" position="15,30" size="690,80" scrollbarMode="showOnDemand" zPosition="1"/>
-		</screen>"""
+class UserSettings(OrbitSettings):
 
     default_config = [
         {
             "key": "username",
-            "value": config.plugins.OrbitIPTV.username.value,
+            "value": config.plugins.OrbitIPTV.username.getValue(),
             "title": _("User"),
             "required": True,
-            "type": TYPE_TEXT,
+            "type": OrbitSettings.TYPE_TEXT,
             "alternative": None
         },
         {
             "key": "password",
-            "value": config.plugins.OrbitIPTV.password.value,
+            "value": config.plugins.OrbitIPTV.password.getValue(),
             "title": _("Password"),
             "required": True,
-            "type": TYPE_PASSWORD,
+            "type": OrbitSettings.TYPE_PASSWORD,
+            "alternatives": None
+        },
+        {
+            "key": "DE",
+            "value": config.plugins.OrbitIPTV.DE.getValue(),
+            "title": _("Germany"),
+            "required": True,
+            "type": OrbitSettings.TYPE_YES_NO,
+            "alternative": None
+        },
+        {
+            "key": "UK",
+            "value": config.plugins.OrbitIPTV.UK.getValue(),
+            "title": _("United Kingdom"),
+            "required": True,
+            "type": OrbitSettings.TYPE_YES_NO,
+            "alternatives": None
+        },
+        {
+            "key": "NL",
+            "value": config.plugins.OrbitIPTV.NL.getValue(),
+            "title": _("Netherland"),
+            "required": True,
+            "type": OrbitSettings.TYPE_YES_NO,
+            "alternatives": None
+        },
+        {
+            "key": "US",
+            "value": config.plugins.OrbitIPTV.US.getValue(),
+            "title": _("United States"),
+            "required": True,
+            "type": OrbitSettings.TYPE_YES_NO,
+            "alternatives": None
+        },
+        {
+            "key": "IT",
+            "value": config.plugins.OrbitIPTV.IT.getValue(),
+            "title": _("Italy"),
+            "required": True,
+            "type": OrbitSettings.TYPE_YES_NO,
             "alternatives": None
         },
     ]
-
 
     title = _("Set User Credentials")
     windowTitle = "Orbit IPTV - Settings"
 
     def __init__(self, session, title="", windowTitle=_("Input"), config=default_config):
-        Screen.__init__(self, session)
-        ConfigListScreen.__init__(self, [], session)
-
-        self._config = config
-        self._title = title
-
-        self["title"] = StaticText(self._title)
-        self["actions"] = ActionMap(["SetupActions"],
-                                         {
-                                             "save": self._ok,
-                                             "cancel": self._cancel,
-                                             "ok": self._ok,
-                                         }, -2)
-
-        self._configElements = []
-        self._createConfigElements()
-
-        self.onExecBegin.append(self.__onExcecBegin)
-        self.onShow.append(self._createSetup)
-        self.onShown.append(boundFunction(self.setTitle, windowTitle))
-        self.onClose.append(self.__onClose)
-
-
-    def __onExcecBegin(self):
-        self.saveKeyboardMode()
-        self.setKeyboardModeAscii()
-
-
-    def __onClose(self):
-        self.restoreKeyboardMode()
-
-
-    def _createConfigElements(self):
-        append = self._configElements.append
-        for item in self._config:
-            if item["type"] == self.TYPE_TEXT:
-                append((ConfigText(default=item["value"], fixed_size=False), item))
-            elif item["type"] == self.TYPE_PASSWORD:
-                append((ConfigPassword(default=item["value"], fixed_size=False), item))
-            elif item["type"] == self.TYPE_PIN:
-                val = item["value"] or 0
-                append((ConfigInteger(default=int(val)), item))
-
-
-    def _createSetup(self):
-        lst = []
-        for config, item in self._configElements:
-            lst.append(getConfigListEntry(item["title"], config))
-        self["config"].setList(lst)
-
-
-    def _ok(self):
-        if self._checkInput():
-            ret = {}
-            for config, item in self._configElements:
-                ret[item["key"]] = str(config.value)
-            self.close(ret)
-        else:
-            self.close(None)
-
-
-    def _checkInput(self):
-        return True
-
-
-    def _checkSingleInput(self, value, config):
-        return value != None and value != ""
-
-
-    def _cancel(self):
-        self.close(None)
+        super(UserSettings, self).__init__(session, title, windowTitle, config)
 
 
 def main(session, **kwargs):
@@ -245,5 +210,5 @@ def Plugins(**kwargs):
         name="OrbitIPTV",
         description="IPTV bouquet management",
         where=PluginDescriptor.WHERE_PLUGINMENU,
-        icon="../ihad_tut.png",
+        icon="./img/logo.png",
         fnc=main)
