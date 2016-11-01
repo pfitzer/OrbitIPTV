@@ -77,7 +77,6 @@ class OrbitScreen(Screen):
             set[k].value = v
             set[k].save()
         config.plugins.OrbitIPTV.save()
-        config.plugins.OrbitIPTV.load()
         self.session.open(MessageBox, text=_("User Credentials saved"), type=MessageBox.TYPE_INFO)
 
     def convert(self, raw):
@@ -105,7 +104,6 @@ class OrbitScreen(Screen):
         eDVBDB.getInstance().reloadBouquets()
         eDVBDB.getInstance().reloadServicelist()
         self.session.open(MessageBox, text=_("Bouquet updated"), type=MessageBox.TYPE_INFO)
-        return
 
     def check_bouquettv(self):
         try:
